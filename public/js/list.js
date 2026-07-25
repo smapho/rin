@@ -20,6 +20,37 @@
     return d.toLocaleString("ja-JP");
   }
 
+  function extractStoragePath(url) {
+    const marker = `/object/public/${BUCKET}/`;
+    const idx = url.indexOf(marker);
+    if (idx === -1) return null;
+    return decodeURIComponent(url.slice(idx + marker.length));
+  }
+
+  async function deleteDoc(doc) {
+    if (!confirm(`この稟議書データを削除します。よろしいですか？\n(${doc.file_name || "無題"} / 元に戻せません)`)) {
+      return;
+    }
+
+    const path = extractStoragePath(doc.image_url);
+    if (path) {
+      const { error: storageError } = await window.db.storage.from(BUCKET).remove([path]);
+      if (storageError) {
+        console.warn("画像ファイルの削除に失敗しました(データの削除は続行します):", storageError.message);
+      }
+    }
+
+    const { error } = await window.db.from("documents").delete().eq("id", doc.id);
+    if (error) {
+      alert("削除に失敗しました: " + error.message);
+      return;
+    }
+
+    allDocs = allDocs.filter((d) => d.id !== doc.id);
+    showToast("削除しました");
+    render();
+  }
+
   async function loadDocs() {
     docListEl.textContent = "読み込み中...";
     const { data, error } = await window.db
@@ -101,6 +132,13 @@
       });
     });
     meta.appendChild(toggle);
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "delete-btn";
+    deleteBtn.textContent = "🗑 削除";
+    deleteBtn.addEventListener("click", () => deleteDoc(doc));
+    meta.appendChild(deleteBtn);
+
     body.appendChild(meta);
 
     const fileName = document.createElement("div");

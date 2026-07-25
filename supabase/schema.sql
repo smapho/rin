@@ -36,6 +36,10 @@ drop policy if exists "documents_update_anon" on public.documents;
 create policy "documents_update_anon" on public.documents
   for update using (true) with check (true);
 
+drop policy if exists "documents_delete_anon" on public.documents;
+create policy "documents_delete_anon" on public.documents
+  for delete using (true);
+
 -- ---------------------------------------------------------------
 -- Storage: 画像を入れるバケット (Supabaseダッシュボード > Storage で
 -- 同名のバケットを作成するか、下記を実行してください)
@@ -52,3 +56,7 @@ create policy "ringi_images_public_read" on storage.objects
 drop policy if exists "ringi_images_anon_insert" on storage.objects;
 create policy "ringi_images_anon_insert" on storage.objects
   for insert with check (bucket_id = 'ringi-images');
+
+drop policy if exists "ringi_images_anon_delete" on storage.objects;
+create policy "ringi_images_anon_delete" on storage.objects
+  for delete using (bucket_id = 'ringi-images');

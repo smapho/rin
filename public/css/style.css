@@ -303,6 +303,21 @@ header.app-header h1 {
   border-color: #d98c00;
 }
 
+.delete-btn {
+  margin-left: auto;
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid #d92b2b;
+  background: #fff;
+  color: #d92b2b;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background: #fdeaea;
+}
+
 .comment-box {
   width: 100%;
   min-height: 40px;
