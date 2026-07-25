@@ -4,9 +4,54 @@
   const lightbox = document.getElementById("lightbox");
   const lightboxImg = document.getElementById("lightboxImg");
   const saveToast = document.getElementById("saveToast");
+  const modeStatusEl = document.getElementById("modeStatus");
+  const modeToggleBtn = document.getElementById("modeToggleBtn");
+
+  const MODE_KEY = "decisionModeUnlocked";
 
   let allDocs = [];
   let currentFilter = "all";
+
+  function isUnlocked() {
+    return sessionStorage.getItem(MODE_KEY) === "1";
+  }
+
+  function updateModeUI() {
+    const unlocked = isUnlocked();
+    modeStatusEl.textContent = unlocked ? "🔓 決裁者モード: 解除中" : "🔒 決裁者モード: ロック中";
+    modeStatusEl.classList.toggle("unlocked", unlocked);
+    modeToggleBtn.textContent = unlocked ? "ロックする" : "決裁者モードを解除";
+  }
+
+  modeToggleBtn.addEventListener("click", async () => {
+    if (isUnlocked()) {
+      sessionStorage.removeItem(MODE_KEY);
+      updateModeUI();
+      render();
+      return;
+    }
+
+    const input = prompt("決裁者用パスコードを入力してください");
+    if (input === null) return;
+
+    const { data, error } = await window.db.rpc("verify_decision_passcode", {
+      input_passcode: input
+    });
+
+    if (error) {
+      alert("確認に失敗しました: " + error.message);
+      return;
+    }
+
+    if (data === true) {
+      sessionStorage.setItem(MODE_KEY, "1");
+      showToast("決裁者モードを解除しました");
+    } else {
+      alert("パスコードが違います");
+    }
+    updateModeUI();
+    render();
+  });
 
   function showToast(message) {
     saveToast.textContent = message;
@@ -112,8 +157,15 @@
       <button data-status="rejected" class="reject ${doc.status === "rejected" ? "selected" : ""}">✖️ 否決</button>
       <button data-status="pending" class="${doc.status === "pending" ? "selected" : ""}">未処理に戻す</button>
     `;
+    if (!isUnlocked()) {
+      toggle.classList.add("locked");
+    }
     toggle.querySelectorAll("button").forEach((btn) => {
       btn.addEventListener("click", async () => {
+        if (!isUnlocked()) {
+          alert("ステータスの変更には決裁者モードの解除が必要です");
+          return;
+        }
         const newStatus = btn.dataset.status;
         if (newStatus === doc.status) return;
         const decidedAt = newStatus === "pending" ? null : new Date().toISOString();
@@ -185,5 +237,6 @@
 
   lightbox.addEventListener("click", () => lightbox.classList.remove("show"));
 
+  updateModeUI();
   loadDocs();
 })();

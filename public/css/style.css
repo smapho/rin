@@ -190,6 +190,40 @@ header.app-header h1 {
   margin: 0 auto;
 }
 
+.decision-mode-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.mode-status {
+  font-size: 13px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #eee;
+  color: #555;
+}
+
+.mode-status.unlocked {
+  background: #e6f6ec;
+  color: #1e9e50;
+}
+
+#modeToggleBtn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.status-toggle.locked button {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .filter-tabs {
   display: flex;
   gap: 8px;

@@ -60,3 +60,42 @@ create policy "ringi_images_anon_insert" on storage.objects
 drop policy if exists "ringi_images_anon_delete" on storage.objects;
 create policy "ringi_images_anon_delete" on storage.objects
   for delete using (bucket_id = 'ringi-images');
+
+-- ---------------------------------------------------------------
+-- 決裁者用パスコード
+-- 一覧画面での「決裁/否決/保留」変更は、このパスコードを知っている
+-- 決裁者だけができるようにするための照合用RPC。
+-- パスコード自体は private スキーマに隠し、PostgRESTからは
+-- verify_decision_passcode() の true/false 結果しか見えない。
+-- ---------------------------------------------------------------
+
+create extension if not exists pgcrypto;
+
+create schema if not exists private;
+revoke all on schema private from public, anon, authenticated;
+
+create table if not exists private.app_secrets (
+  key text primary key,
+  value text not null
+);
+
+-- 'CHANGE_ME_PASSCODE' の部分を、決裁者に共有する実際のパスコードに
+-- 書き換えてから実行してください。パスコードを変更したい場合は
+-- この insert 文だけ値を変えて再実行すればOKです。
+insert into private.app_secrets (key, value)
+values ('decision_passcode_hash', crypt('CHANGE_ME_PASSCODE', gen_salt('bf')))
+on conflict (key) do update set value = excluded.value;
+
+create or replace function public.verify_decision_passcode(input_passcode text)
+returns boolean
+language sql
+security definer
+set search_path = public, private
+as $$
+  select value = crypt(input_passcode, value)
+  from private.app_secrets
+  where key = 'decision_passcode_hash';
+$$;
+
+revoke all on function public.verify_decision_passcode(text) from public;
+grant execute on function public.verify_decision_passcode(text) to anon, authenticated;
