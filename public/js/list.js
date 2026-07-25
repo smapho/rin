@@ -31,7 +31,7 @@
       docListEl.textContent = "読み込みエラー: " + error.message;
       return;
     }
-    allDocs = data || [];
+    allDocs = (data || []).filter((d) => d.image_url && d.image_url.trim() !== "");
     render();
   }
 
