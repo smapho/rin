@@ -8,7 +8,8 @@ window.db = window.supabase.createClient(
 const STATUS_LABEL = {
   pending: "未処理",
   approved: "決裁",
-  rejected: "否決"
+  rejected: "否決",
+  on_hold: "保留"
 };
 
 const BUCKET = window.APP_CONFIG.STORAGE_BUCKET;

@@ -132,6 +132,13 @@ header.app-header h1 {
   transform: rotate(18deg);
 }
 
+.stamp.hold {
+  left: 50%;
+  top: 24px;
+  transform: translateX(-50%) rotate(0deg);
+  color: #d98c00;
+}
+
 .empty-state {
   text-align: center;
   color: #777;
@@ -162,6 +169,17 @@ header.app-header h1 {
 
 .btn-approve {
   background: #1e9e50;
+}
+
+.btn-hold {
+  background: #d98c00;
+}
+
+.action-buttons button.btn-hold {
+  width: 100px;
+  height: 56px;
+  font-size: 16px;
+  align-self: center;
 }
 
 /* ---------- List screen ---------- */
@@ -251,6 +269,7 @@ header.app-header h1 {
 .status-badge.approved { background: #1e9e50; }
 .status-badge.rejected { background: #d92b2b; }
 .status-badge.pending { background: #999; }
+.status-badge.on_hold { background: #d98c00; }
 
 .status-toggle {
   display: flex;
@@ -276,6 +295,12 @@ header.app-header h1 {
   background: #d92b2b;
   color: #fff;
   border-color: #d92b2b;
+}
+
+.status-toggle button.selected.hold {
+  background: #d98c00;
+  color: #fff;
+  border-color: #d98c00;
 }
 
 .comment-box {

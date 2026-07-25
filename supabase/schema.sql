@@ -5,11 +5,17 @@ create table if not exists public.documents (
   id uuid primary key default gen_random_uuid(),
   image_url text not null,
   file_name text,
-  status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
+  status text not null default 'pending' check (status in ('pending', 'approved', 'rejected', 'on_hold')),
   comment text default '',
   decided_at timestamptz,
   created_at timestamptz not null default now()
 );
+
+-- 既存テーブルに「保留」ステータスを追加する場合のマイグレーション
+-- (テーブルを新規作成した場合は上のcheck制約に含まれているため不要)
+alter table public.documents drop constraint if exists documents_status_check;
+alter table public.documents add constraint documents_status_check
+  check (status in ('pending', 'approved', 'rejected', 'on_hold'));
 
 create index if not exists documents_status_idx on public.documents (status);
 create index if not exists documents_created_at_idx on public.documents (created_at);

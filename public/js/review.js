@@ -3,6 +3,7 @@
   const progressText = document.getElementById("progressText");
   const btnApprove = document.getElementById("btnApprove");
   const btnReject = document.getElementById("btnReject");
+  const btnHold = document.getElementById("btnHold");
 
   const SWIPE_THRESHOLD = 100;
 
@@ -48,6 +49,7 @@
     card.innerHTML = `
       <div class="stamp approve">決裁</div>
       <div class="stamp reject">否決</div>
+      <div class="stamp hold">保留</div>
       <img src="${doc.image_url}" alt="${doc.file_name || "稟議書"}">
     `;
     cardStage.appendChild(card);
@@ -58,43 +60,53 @@
   function attachDrag(card, doc) {
     const approveStamp = card.querySelector(".stamp.approve");
     const rejectStamp = card.querySelector(".stamp.reject");
+    const holdStamp = card.querySelector(".stamp.hold");
 
     card.addEventListener("pointerdown", (e) => {
       if (busy) return;
       card.setPointerCapture(e.pointerId);
-      dragState = { startX: e.clientX, dx: 0 };
+      dragState = { startX: e.clientX, startY: e.clientY, dx: 0, dy: 0 };
       card.style.transition = "none";
     });
 
     card.addEventListener("pointermove", (e) => {
       if (!dragState || busy) return;
       dragState.dx = e.clientX - dragState.startX;
-      const rotate = dragState.dx / 20;
-      card.style.transform = `translateX(${dragState.dx}px) rotate(${rotate}deg)`;
-      const ratio = Math.min(Math.abs(dragState.dx) / SWIPE_THRESHOLD, 1);
-      if (dragState.dx > 0) {
-        approveStamp.style.opacity = ratio;
-        rejectStamp.style.opacity = 0;
-      } else {
-        rejectStamp.style.opacity = ratio;
-        approveStamp.style.opacity = 0;
+      dragState.dy = e.clientY - dragState.startY;
+      const { dx, dy } = dragState;
+      const rotate = dx / 20;
+      card.style.transform = `translate(${dx}px, ${dy}px) rotate(${rotate}deg)`;
+
+      approveStamp.style.opacity = 0;
+      rejectStamp.style.opacity = 0;
+      holdStamp.style.opacity = 0;
+
+      if (dy < 0 && Math.abs(dy) > Math.abs(dx)) {
+        holdStamp.style.opacity = Math.min(Math.abs(dy) / SWIPE_THRESHOLD, 1);
+      } else if (dx > 0) {
+        approveStamp.style.opacity = Math.min(dx / SWIPE_THRESHOLD, 1);
+      } else if (dx < 0) {
+        rejectStamp.style.opacity = Math.min(-dx / SWIPE_THRESHOLD, 1);
       }
     });
 
     const endDrag = (e) => {
       if (!dragState || busy) return;
-      const dx = dragState.dx;
+      const { dx, dy } = dragState;
       dragState = null;
       card.style.transition = "transform 0.25s ease";
 
-      if (dx > SWIPE_THRESHOLD) {
+      if (dy < -SWIPE_THRESHOLD && Math.abs(dy) > Math.abs(dx)) {
+        commitDecision(doc, "on_hold", card);
+      } else if (dx > SWIPE_THRESHOLD) {
         commitDecision(doc, "approved", card);
       } else if (dx < -SWIPE_THRESHOLD) {
         commitDecision(doc, "rejected", card);
       } else {
-        card.style.transform = "translateX(0) rotate(0)";
+        card.style.transform = "translate(0, 0) rotate(0)";
         approveStamp.style.opacity = 0;
         rejectStamp.style.opacity = 0;
+        holdStamp.style.opacity = 0;
       }
     };
 
@@ -102,15 +114,25 @@
     card.addEventListener("pointercancel", endDrag);
   }
 
+  const STAMP_SELECTOR = {
+    approved: ".stamp.approve",
+    rejected: ".stamp.reject",
+    on_hold: ".stamp.hold"
+  };
+
   async function commitDecision(doc, status, card) {
     if (busy) return;
     busy = true;
 
-    const flyX = status === "approved" ? window.innerWidth : -window.innerWidth;
+    let flyX = 0;
+    let flyY = 0;
+    if (status === "approved") flyX = window.innerWidth;
+    else if (status === "rejected") flyX = -window.innerWidth;
+    else if (status === "on_hold") flyY = -window.innerHeight;
+
     card.style.transition = "transform 0.35s ease";
-    card.style.transform = `translateX(${flyX}px) rotate(${flyX / 20}deg)`;
-    const stampClass = status === "approved" ? ".stamp.approve" : ".stamp.reject";
-    card.querySelector(stampClass).style.opacity = 1;
+    card.style.transform = `translate(${flyX}px, ${flyY}px) rotate(${flyX / 20}deg)`;
+    card.querySelector(STAMP_SELECTOR[status]).style.opacity = 1;
 
     const { error } = await window.db
       .from("documents")
@@ -139,6 +161,11 @@
   btnReject.addEventListener("click", () => {
     if (busy || queue.length === 0 || !currentCard) return;
     commitDecision(queue[0], "rejected", currentCard);
+  });
+
+  btnHold.addEventListener("click", () => {
+    if (busy || queue.length === 0 || !currentCard) return;
+    commitDecision(queue[0], "on_hold", currentCard);
   });
 
   loadQueue();

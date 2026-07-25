@@ -77,6 +77,7 @@
     toggle.className = "status-toggle";
     toggle.innerHTML = `
       <button data-status="approved" class="approve ${doc.status === "approved" ? "selected" : ""}">⭕ 決裁</button>
+      <button data-status="on_hold" class="hold ${doc.status === "on_hold" ? "selected" : ""}">🔼 保留</button>
       <button data-status="rejected" class="reject ${doc.status === "rejected" ? "selected" : ""}">✖️ 否決</button>
       <button data-status="pending" class="${doc.status === "pending" ? "selected" : ""}">未処理に戻す</button>
     `;
@@ -128,7 +129,7 @@
 
     const decidedAt = document.createElement("div");
     decidedAt.className = "decided-at";
-    decidedAt.textContent = "決裁日時: " + formatDate(doc.decided_at) + " / 取込日時: " + formatDate(doc.created_at);
+    decidedAt.textContent = "処理日時: " + formatDate(doc.decided_at) + " / 取込日時: " + formatDate(doc.created_at);
     body.appendChild(decidedAt);
 
     row.appendChild(body);
