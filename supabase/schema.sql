@@ -90,7 +90,7 @@ create or replace function public.verify_decision_passcode(input_passcode text)
 returns boolean
 language sql
 security definer
-set search_path = public, private
+set search_path = public, private, extensions
 as $$
   select value = crypt(input_passcode, value)
   from private.app_secrets
