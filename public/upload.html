@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>稟議書 決裁 | 取込</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="app-header">
+  <h1>稟議書 決裁アプリ</h1>
+  <nav class="nav-links">
+    <a href="index.html">審査</a>
+    <a href="list.html">一覧</a>
+    <a href="upload.html" class="active">取込</a>
+  </nav>
+</header>
+
+<main class="upload-main">
+  <div class="dropzone" id="dropzone">
+    <p>タップして画像を選択、またはドラッグ&ドロップ</p>
+    <p style="font-size:12px;color:#999;">複数の稟議書画像をまとめて取り込めます (JPG/PNG/HEIC等)</p>
+    <input type="file" id="fileInput" accept="image/*" multiple style="display:none;">
+  </div>
+  <div class="upload-list" id="uploadList"></div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/supabaseClient.js"></script>
+<script src="js/upload.js"></script>
+</body>
+</html>

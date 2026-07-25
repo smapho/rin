@@ -1,0 +1,391 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+  background: #f2f3f5;
+  color: #222;
+  overscroll-behavior: none;
+}
+
+a {
+  color: inherit;
+}
+
+header.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+header.app-header h1 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.nav-links {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-links a, .nav-links button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.nav-links a.active {
+  background: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+/* ---------- Review screen ---------- */
+
+.review-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  height: calc(100vh - 60px);
+  touch-action: none;
+}
+
+.progress-text {
+  margin: 4px 0 16px;
+  color: #666;
+  font-size: 14px;
+}
+
+.card-stage {
+  position: relative;
+  width: min(90vw, 640px);
+  height: calc(100% - 140px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.doc-card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+  will-change: transform;
+}
+
+.doc-card:active {
+  cursor: grabbing;
+}
+
+.doc-card img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.stamp {
+  position: absolute;
+  top: 40px;
+  padding: 10px 24px;
+  font-size: 40px;
+  font-weight: 900;
+  border: 8px solid currentColor;
+  border-radius: 16px;
+  opacity: 0;
+  transform: rotate(-18deg);
+  pointer-events: none;
+  letter-spacing: 4px;
+}
+
+.stamp.approve {
+  left: 30px;
+  color: #1e9e50;
+}
+
+.stamp.reject {
+  right: 30px;
+  color: #d92b2b;
+  transform: rotate(18deg);
+}
+
+.empty-state {
+  text-align: center;
+  color: #777;
+  padding: 60px 20px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.action-buttons button {
+  width: 120px;
+  height: 64px;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 16px;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.btn-reject {
+  background: #d92b2b;
+}
+
+.btn-approve {
+  background: #1e9e50;
+}
+
+/* ---------- List screen ---------- */
+
+.list-main {
+  padding: 16px 20px 60px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.filter-tabs button {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.filter-tabs button.active {
+  background: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+.doc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.doc-row {
+  display: flex;
+  gap: 16px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  align-items: flex-start;
+}
+
+.doc-row img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #eee;
+  cursor: zoom-in;
+}
+
+.doc-row .doc-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.doc-row .doc-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.doc-row .file-name {
+  font-size: 13px;
+  color: #666;
+  word-break: break-all;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.status-badge.approved { background: #1e9e50; }
+.status-badge.rejected { background: #d92b2b; }
+.status-badge.pending { background: #999; }
+
+.status-toggle {
+  display: flex;
+  gap: 6px;
+}
+
+.status-toggle button {
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.status-toggle button.selected.approve {
+  background: #1e9e50;
+  color: #fff;
+  border-color: #1e9e50;
+}
+
+.status-toggle button.selected.reject {
+  background: #d92b2b;
+  color: #fff;
+  border-color: #d92b2b;
+}
+
+.comment-box {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.decided-at {
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+}
+
+.save-toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #333;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+}
+
+.save-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* image lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+.lightbox.show {
+  display: flex;
+}
+
+.lightbox img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 8px;
+}
+
+/* ---------- Upload screen ---------- */
+
+.upload-main {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.dropzone {
+  border: 2px dashed #aaa;
+  border-radius: 16px;
+  padding: 40px 20px;
+  text-align: center;
+  color: #666;
+  background: #fff;
+  cursor: pointer;
+}
+
+.dropzone.dragover {
+  border-color: #1e9e50;
+  background: #eafbf1;
+}
+
+.upload-list {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upload-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.upload-item .name {
+  flex: 1;
+  word-break: break-all;
+}
+
+.upload-item .status {
+  font-size: 13px;
+  color: #666;
+}
+
+.upload-item .status.ok { color: #1e9e50; }
+.upload-item .status.error { color: #d92b2b; }

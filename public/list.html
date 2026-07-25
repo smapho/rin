@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>稟議書 決裁 | 一覧</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="app-header">
+  <h1>稟議書 決裁アプリ</h1>
+  <nav class="nav-links">
+    <a href="index.html">審査</a>
+    <a href="list.html" class="active">一覧</a>
+    <a href="upload.html">取込</a>
+  </nav>
+</header>
+
+<main class="list-main">
+  <div class="filter-tabs" id="filterTabs">
+    <button data-status="all" class="active">すべて</button>
+    <button data-status="pending">未処理</button>
+    <button data-status="approved">決裁</button>
+    <button data-status="rejected">否決</button>
+  </div>
+  <div class="doc-list" id="docList">読み込み中...</div>
+</main>
+
+<div class="lightbox" id="lightbox">
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<div class="save-toast" id="saveToast">保存しました</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/supabaseClient.js"></script>
+<script src="js/list.js"></script>
+</body>
+</html>
