@@ -85,9 +85,19 @@
       }
     }
 
-    const { error } = await window.db.from("documents").delete().eq("id", doc.id);
+    const { data, error } = await window.db
+      .from("documents")
+      .delete()
+      .eq("id", doc.id)
+      .select();
+
     if (error) {
       alert("削除に失敗しました: " + error.message);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      alert("削除できませんでした。DB側の削除権限(RLSポリシー)が設定されていない可能性があります。");
       return;
     }
 
